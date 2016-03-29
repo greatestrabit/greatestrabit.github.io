@@ -1,84 +1,74 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML>
 <html>
 <head>
   <meta charset="utf-8">
   
-  <title>梦里不知身是客</title>
+  <title>带你一步步实现线程池异步回调 | 梦里不知身是客</title>
+  <meta name="author" content="晓渡">
+  
+  <meta name="description" content="1.字面意义上的回调字面意思上理解回调,就是A调用B,B回过头来再调用A,即是回调.既然是这样,当然就要求A中有B,B中有A.如下:  
+1234567891011121314151617181920212223242526class A &amp;#123;	public void ask(final B">
+  
+  
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="带你一步步实现线程池异步回调1.字面意义上的回调字面意思上理解回调,就是A调用B,B回过头来再调用A,即是回调.既然是这样,当然就要求A中有B,B中有A.如下:  
-1234567891011121314151617181920212223242526class A &amp;#123;	public void ask(final B b, final String question) &amp;#123;		b">
-<meta property="og:type" content="article">
-<meta property="og:title" content="梦里不知身是客">
-<meta property="og:url" content="http://greatestrabit.github.io/2016/03/29/callback/index.html">
-<meta property="og:site_name" content="梦里不知身是客">
-<meta property="og:description" content="带你一步步实现线程池异步回调1.字面意义上的回调字面意思上理解回调,就是A调用B,B回过头来再调用A,即是回调.既然是这样,当然就要求A中有B,B中有A.如下:  
-1234567891011121314151617181920212223242526class A &amp;#123;	public void ask(final B b, final String question) &amp;#123;		b">
-<meta property="og:updated_time" content="2016-03-29T06:51:53.003Z">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="梦里不知身是客">
-<meta name="twitter:description" content="带你一步步实现线程池异步回调1.字面意义上的回调字面意思上理解回调,就是A调用B,B回过头来再调用A,即是回调.既然是这样,当然就要求A中有B,B中有A.如下:  
-1234567891011121314151617181920212223242526class A &amp;#123;	public void ask(final B b, final String question) &amp;#123;		b">
+
+  <meta property="og:title" content="带你一步步实现线程池异步回调"/>
+  <meta property="og:site_name" content="梦里不知身是客"/>
+
   
-    <link rel="alternate" href="/atom.xml" title="梦里不知身是客" type="application/atom+xml">
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="梦里不知身是客" type="application/atom+xml">
   
   
-    <link rel="icon" href="/favicon.png">
+    <link href="/favicon.png" rel="icon">
   
   
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
-  
-  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
   
 
 </head>
 
-<body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">梦里不知身是客</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
-        
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="Zoeken"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" results="0" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://greatestrabit.github.io"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main"><article id="post-callback" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2016/03/29/callback/" class="article-date">
-  <time datetime="2016-03-29T01:23:31.364Z" itemprop="datePublished">2016-03-29</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="带你一步步实现线程池异步回调"><a href="#带你一步步实现线程池异步回调" class="headerlink" title="带你一步步实现线程池异步回调"></a>带你一步步实现线程池异步回调</h1><h2 id="1-字面意义上的回调"><a href="#1-字面意义上的回调" class="headerlink" title="1.字面意义上的回调"></a>1.字面意义上的回调</h2><p>字面意思上理解回调,就是A调用B,B回过头来再调用A,即是回调.既然是这样,当然就要求A中有B,B中有A.如下:  </p>
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">梦里不知身是客</a><span class="split"></span><span class="title">带你一步步实现线程池异步回调</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2016-03-29</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  <div class="col-xs-12 col-sm-3 col-md-3 toc"> 
+	<!-- toc -->
+<script type="text/javascript">
+		jQuery(document).ready(function() {
+ 		   generateWikiTOC('.note', '.toc',  2 , 2 );
+		});
+</script>
+  </div><!-- col-md-3 -->
+  
+  
+
+  
+  <div class="col-xs-12 col-sm-9 col-md-9 note">
+	
+
+	  <!-- content -->
+	  <h2 id="1-字面意义上的回调"><a href="#1-字面意义上的回调" class="headerlink" title="1.字面意义上的回调"></a>1.字面意义上的回调</h2><p>字面意思上理解回调,就是A调用B,B回过头来再调用A,即是回调.既然是这样,当然就要求A中有B,B中有A.如下:  </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ask</span><span class="params">(<span class="keyword">final</span> B b, <span class="keyword">final</span> String question)</span> </span>&#123;</span><br><span class="line">		b.answer(<span class="keyword">this</span>, question);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processResult</span><span class="params">(<span class="keyword">final</span> String answer)</span> </span>&#123;</span><br><span class="line">		System.out.println(answer);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">answer</span><span class="params">(<span class="keyword">final</span> A a, <span class="keyword">final</span> String question)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (question.equals(<span class="string">"What is the answer to life, the universe and everything?"</span>)) &#123;</span><br><span class="line">			a.processResult(<span class="string">"42"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncObjectCallback</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">		B b = <span class="keyword">new</span> B();</span><br><span class="line">		A a = <span class="keyword">new</span> A();</span><br><span class="line">  </span><br><span class="line">		a.ask(b, <span class="string">"What is the answer to life, the universe and everything?"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="2-面向对象的回调"><a href="#2-面向对象的回调" class="headerlink" title="2.面向对象的回调"></a>2.面向对象的回调</h2><p>上面的写法中,B的对象只在方法中被传递了.实际上,这个B对象后来又调用了A中的方法,它的作用应该不止局限在一个方法中,而应该是A的一个部分.也就是,上面的写法不够”面向对象”,让我们来改造一下:  </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> B b;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">A</span><span class="params">(<span class="keyword">final</span> B b)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.b = b;</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">ask</span><span class="params">(<span class="keyword">final</span> String question)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.b.answer(<span class="keyword">this</span>, question);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">processResult</span><span class="params">(<span class="keyword">final</span> String answer)</span> </span>&#123;</span><br><span class="line">		System.out.println(answer);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">answer</span><span class="params">(<span class="keyword">final</span> A a, <span class="keyword">final</span> String question)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">if</span> (question.equals(<span class="string">"What is the answer to life, the universe and everything?"</span>)) &#123;</span><br><span class="line">			a.processResult(<span class="string">"42"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SyncOOCallback</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">		B b = <span class="keyword">new</span> B();</span><br><span class="line">		A a = <span class="keyword">new</span> A(b);</span><br><span class="line">		a.ask(<span class="string">"What is the answer to life, the universe and everything?"</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
@@ -90,88 +80,73 @@
 <h2 id="5-线程池异步回调"><a href="#5-线程池异步回调" class="headerlink" title="5.线程池异步回调"></a>5.线程池异步回调</h2><p>每次建立新的线程耗费资源巨大,为了重用线程,使用线程池管理异步调用,这时候就要求Client不仅要实现IClient接口,还要同时是一个任务,才能被线程池执行,如下:  </p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ClientRunnable</span> <span class="keyword">implements</span> <span class="title">IClient</span>, <span class="title">Runnable</span> </span>&#123;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> Server server;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> String question;</span><br><span class="line">	<span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> id;</span><br><span class="line">  </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">ClientRunnable</span><span class="params">(<span class="keyword">final</span> Server server, <span class="keyword">final</span> String question, <span class="keyword">final</span> <span class="keyword">int</span> id)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.server = server;</span><br><span class="line">		<span class="keyword">this</span>.question = question;</span><br><span class="line">		<span class="keyword">this</span>.id = id;</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">recvAnswer</span><span class="params">(<span class="keyword">final</span> String answer)</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">"clinet "</span> + <span class="keyword">this</span>.id + <span class="string">" got answer: "</span> + answer);</span><br><span class="line">	&#125;</span><br><span class="line">  </span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">		server.answer(ClientRunnable.<span class="keyword">this</span>, <span class="keyword">this</span>.question);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line">  </span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadpoolCallback</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(<span class="keyword">final</span> String[] args)</span> </span>&#123;</span><br><span class="line">		ExecutorService es = Executors.newCachedThreadPool();</span><br><span class="line">  </span><br><span class="line">		Server server = <span class="keyword">new</span> Server();</span><br><span class="line">  </span><br><span class="line">		<span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; <span class="number">100</span>; i++) &#123;</span><br><span class="line">			ClientRunnable cr = <span class="keyword">new</span> ClientRunnable(server, <span class="string">"What is the answer to life, the universe and everything?"</span>,</span><br><span class="line">					i);</span><br><span class="line">			es.execute(cr);</span><br><span class="line">			System.out.println(<span class="string">"client "</span> + i + <span class="string">" asked !"</span>);</span><br><span class="line">		&#125;</span><br><span class="line">  </span><br><span class="line">		es.shutdown();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>至此,我们就实现了线程池异步回调.</p>
+	  
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://greatestrabit.github.io/2016/03/29/callback/" data-id="cimd1o5fa0000vgix9ec9ez23" class="article-share-link">Delen</a>
-      
-      
-    </footer>
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+	
+		
+			
+			
+		
+	
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next disabled"><a>next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
   </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2016 晓渡
   
-    
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
   
-</article>
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
 
-</section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-
-  
-    
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Archieven</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2016/03/">March 2016</a></li></ul>
-    </div>
-  </div>
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
 
 
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">Recente berichten</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2016/03/29/callback/">(no title)</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
-  <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2016 John Doe<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
-    </div>
-  </div>
-</footer>
-    </div>
-    <nav id="mobile-nav">
-  
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-</nav>
-    
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
 
 
-  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
-  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
 
 
-<script src="/js/script.js"></script>
-
-  </div>
 </body>
 </html>
