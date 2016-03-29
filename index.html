@@ -1,7 +1,7 @@
-#����һ����ʵ���̳߳��첽�ص�  
+﻿#带你一步步实现线程池异步回调  
   
-##1.���������ϵĻص�  
-������˼������ص�,����A����B,B�ع�ͷ���ٵ���A,���ǻص�.��Ȼ������,��Ȼ��Ҫ��A����B,B����A.����:  
+##1.字面意义上的回调  
+字面意思上理解回调,就是A调用B,B回过头来再调用A,即是回调.既然是这样,当然就要求A中有B,B中有A.如下:  
   
 ````java
 class A {
@@ -32,8 +32,8 @@ public class SyncObjectCallback {
 }
 ````
   
-##2.�������Ļص�  
-�����д����,B�Ķ���ֻ�ڷ����б�������.ʵ����,���B��������ֵ�����A�еķ���,��������Ӧ�ò�ֹ������һ��������,��Ӧ����A��һ������.Ҳ����,�����д������"�������",������������һ��:  
+##2.面向对象的回调  
+上面的写法中,B的对象只在方法中被传递了.实际上,这个B对象后来又调用了A中的方法,它的作用应该不止局限在一个方法中,而应该是A的一个部分.也就是,上面的写法不够"面向对象",让我们来改造一下:  
   
 ````java
 class A {
@@ -69,9 +69,9 @@ public class SyncOOCallback {
 }
 ````
   
-##3.����ӿڵĻص�  
-�������������,����û�˻����Ҳ�ǻص���.��Ϊ��ûʲô����.����������̶�������ص��Ǻ���Ҫ��.��ʵ�ص��������õĵط�,��������"Ԥ��"����.  
-������չ����һ��.�������������е�B,ΪA�ṩ�˺ܶ����֮��ͻȻ����,��Ϊ����Ķ����ṩ����,����һ��,B�ͱ����Server.���һ�Ҫ�ƶ�����.������ʲô��,����ҪServer�ṩ�������,�Է�һ��Ҫ��һ��recvAnswer�ӿڹ�Server���ò���,����Server���ܰѽ�����ظ�Client.��������ƶ�������?ͨ��Interface.����:  
+##3.面向接口的回调  
+上面的两个例子,估计没人会承认也是回调吧.因为并没什么卵用.不过这个流程对于理解回调是很重要的.其实回调真正有用的地方,在于它的"预测"能力.  
+我们扩展想象一下.假设上面例子中的B,为A提供了很多服务之后突然觉醒,想为更多的对象提供服务,这样一来,B就变成了Server.而且还要制定规则.规则是什么呢,就是要Server提供服务可以,对方一定要有一个recvAnswer接口供Server调用才行,这样Server才能把结果传回给Client.具体如何制定规则呢?通过Interface.如下:  
   
 ````java
 public interface IClient {
@@ -121,11 +121,11 @@ public class SyncInterfaceCallback {
 }
 ````
   
-ע��,�ӿ�IClientʵ����Ӧ��������Server�˵�,������Server�ƶ���,��ҪClient��ʵ�ֵĽӿ�,��Ȼ����ȥ����Client�ܽ�.  
-Ϊʲô˵��"Ԥ��"������?������һ������.Server������һ���ײ����,����ײ����֪��������һ����и߲��������Ҫ����,��������������ϴ�����?�ײ���Գ�ŵ,ֻ����ʵ��IClient�ӿ�,�Ҿͻ�������е�recvAnswer����,�����ݴ�����.���ڵײ�Ҳ���Ե��ø߲�ķ���,������"Ԥ��"������?  
+注意,接口IClient实际上应该是属于Server端的,它是由Server制定的,需要Client来实现的接口,虽然看上去它跟Client很近.  
+为什么说有"预测"能力呢?想象另一个场景.Server现在是一个底层服务,这个底层服务知道迟早有一天会有高层服务来讨要数据,但是数据如何向上传递呢?底层可以承诺,只有你实现IClient接口,我就会调用其中的recvAnswer方法,把数据传上来.现在底层也可以调用高层的方法,算是有"预测"能力吧?  
   
-##4.�첽�ص�  
-����ĵ��ö���ͬ����.����Server��������Ҫ�ϳ���ʱ��,��һ��ϣ��������һ���������߳��б�ִ��,���ǾͿ��԰�ask�����ĵ������̰߳�װһ��:  
+##4.异步回调  
+上面的调用都是同步的.假设Server计算结果需要较长的时间,你一定希望它能在一个单独的线程中被执行,这是就可以把ask方法的调用用线程包装一下:  
   
 ````java
 public class ClientAsync implements IClient {
@@ -161,8 +161,8 @@ public class AsyncInterfaceCallback {
 }
 ````
   
-##5.�̳߳��첽�ص�  
-ÿ�ν����µ��̺߳ķ���Դ�޴�,Ϊ�������߳�,ʹ���̳߳ع����첽����,��ʱ���Ҫ��Client����Ҫʵ��IClient�ӿ�,��Ҫͬʱ��һ������,���ܱ��̳߳�ִ��,����:  
+##5.线程池异步回调  
+每次建立新的线程耗费资源巨大,为了重用线程,使用线程池管理异步调用,这时候就要求Client不仅要实现IClient接口,还要同时是一个任务,才能被线程池执行,如下:  
   
 ````java
 public class ClientRunnable implements IClient, Runnable {
@@ -205,4 +205,4 @@ public class ThreadpoolCallback {
 }
 ````
   
-����,���Ǿ�ʵ�����̳߳��첽�ص�.
+至此,我们就实现了线程池异步回调.
