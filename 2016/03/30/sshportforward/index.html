@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>SSH端口转发实战 | 梦里不知身是客</title>
+  <meta name="author" content="晓渡">
+  
+  <meta name="description" content="转载请注明出处作者:晓渡,文章地址:https://greatestrabit.github.io/2016/03/30/sshportforward/  
+SSH是Linux下经常用到的远程连接工具.然而SSH能做到的可不止这些,它还有一个更加高大上的功能,即端口转发.关于端口转发的原理,实战 S">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="SSH端口转发实战"/>
+  <meta property="og:site_name" content="梦里不知身是客"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="梦里不知身是客" type="application/atom+xml">
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">梦里不知身是客</a><span class="split"></span><span class="title">SSH端口转发实战</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2016-03-30</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  <div class="col-xs-12 col-sm-3 col-md-3 toc"> 
+	<!-- toc -->
+<script type="text/javascript">
+		jQuery(document).ready(function() {
+ 		   generateWikiTOC('.note', '.toc',  2 , 2 );
+		});
+</script>
+  </div><!-- col-md-3 -->
+  
+  
+
+  
+  <div class="col-xs-12 col-sm-9 col-md-9 note">
+	
+
+	  <!-- content -->
+	  <p>转载请注明出处<br>作者:晓渡,文章地址:<a href="https://greatestrabit.github.io/2016/03/30/sshportforward/" target="_blank" rel="external">https://greatestrabit.github.io/2016/03/30/sshportforward/</a>  </p>
+<p>SSH是Linux下经常用到的远程连接工具.然而SSH能做到的可不止这些,它还有一个更加高大上的功能,即端口转发.<br>关于端口转发的原理,<a href="https://www.ibm.com/developerworks/cn/linux/l-cn-sshforward/" target="_blank" rel="external">实战 SSH 端口转发</a>这篇文章已经讲解的很详细了,里面也进行了某些总结,可以说非常到位,我们本篇的理论基础也在此,希望阅读本篇文章之前一定要先吃透上面这篇文章.<br>IBM的这篇文章虽好,可是还没到可以直接拿来用的程度,我们今天来补充一下.  </p>
+<h2 id="1-更多的参数"><a href="#1-更多的参数" class="headerlink" title="1. 更多的参数"></a>1. 更多的参数</h2><h3 id="1-C-数据压缩"><a href="#1-C-数据压缩" class="headerlink" title="1. -C 数据压缩"></a>1. -C 数据压缩</h3><p>这个不多说了.  </p>
+<h3 id="2-f-N-后台运心参数"><a href="#2-f-N-后台运心参数" class="headerlink" title="2. -f -N 后台运心参数"></a>2. -f -N 后台运心参数</h3><p>这两个参数配合,可以在输入登录密码之后使程序在后台运行.  </p>
+<h3 id="3-g-远程连接支持"><a href="#3-g-远程连接支持" class="headerlink" title="3. -g 远程连接支持"></a>3. -g 远程连接支持</h3><p>本地端口转发时,默认转发端口只允许本地程序访问,使用-g参数才可以接受远程主机连接.这个参数和-L一起使用时才起作用,和-R一起使用时无用.典型的,假设A电脑在家,B电脑在办公室,O电脑为有公网IP(116.117.118.119)的中转站,现在想从A电脑远程连接到B电脑,需要做的工作为:  </p>
+<ul>
+<li>1.在B电脑上建立远程转发到O.假设O电脑使用端口11111  </li>
+<li>2.在O电脑上建立本地转发,使用-g参数,假设将22222端口转发到11111  </li>
+<li>3.在A电脑上执行”ssh -p 22222 username@116.117.118.119”,即可以连接到B电脑  </li>
+</ul>
+<h2 id="2-更多的配置"><a href="#2-更多的配置" class="headerlink" title="2. 更多的配置"></a>2. 更多的配置</h2><p>由于路由器的限制,长期不活动的连接有可能会被断开,为了防止这种事情发生,可以增加心跳配置.具体为:<br>修改~/.ssh/config文件,增加如下内容:<br>Host *<br>ServerAliveInterval 30  </p>
+<p>#如果依然有问题,增加如下内容再重试:<br>TCPKeepAlive yes  </p>
+<h2 id="3-更多的工具"><a href="#3-更多的工具" class="headerlink" title="3. 更多的工具"></a>3. 更多的工具</h2><h3 id="1-plink"><a href="#1-plink" class="headerlink" title="1.plink"></a>1.<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" target="_blank" rel="external">plink</a></h3><p>windows下的SSH客户端命令行工具  </p>
+<h3 id="2-JSch"><a href="#2-JSch" class="headerlink" title="2.JSch"></a>2.<a href="http://www.jcraft.com/jsch/" target="_blank" rel="external">JSch</a></h3><p>Java实现的SSH客户端,如果开发中需要用到,可以直接引用,这里有一些<a href="http://www.jcraft.com/jsch/examples/" target="_blank" rel="external">例子</a></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+	
+		
+			
+			
+		
+	
+		
+	
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next disabled"><a>next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2016 晓渡
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
