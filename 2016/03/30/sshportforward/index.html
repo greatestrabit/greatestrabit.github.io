@@ -74,16 +74,34 @@ SSH是Linux下经常用到的远程连接工具.然而SSH能做到的可不止�
 <p>SSH是Linux下经常用到的远程连接工具.然而SSH能做到的可不止这些,它还有一个更加高大上的功能,即端口转发.<br>关于端口转发的原理,<a href="https://www.ibm.com/developerworks/cn/linux/l-cn-sshforward/" target="_blank" rel="external">实战 SSH 端口转发</a>这篇文章已经讲解的很详细了,里面也进行了某些总结,可以说非常到位,我们本篇的理论基础也在此,希望阅读本篇文章之前一定要先吃透上面这篇文章.<br>IBM的这篇文章虽好,可是还没到可以直接拿来用的程度,我们今天来补充一下.  </p>
 <h2 id="1-更多的参数"><a href="#1-更多的参数" class="headerlink" title="1. 更多的参数"></a>1. 更多的参数</h2><h3 id="1-C-数据压缩"><a href="#1-C-数据压缩" class="headerlink" title="1. -C 数据压缩"></a>1. -C 数据压缩</h3><p>这个不多说了.  </p>
 <h3 id="2-f-N-后台运行参数"><a href="#2-f-N-后台运行参数" class="headerlink" title="2. -f -N 后台运行参数"></a>2. -f -N 后台运行参数</h3><p>这两个参数配合,可以在输入登录密码之后使程序在后台运行.  </p>
-<h3 id="3-g-远程连接支持"><a href="#3-g-远程连接支持" class="headerlink" title="3. -g 远程连接支持"></a>3. -g 远程连接支持</h3><p>本地端口转发时,默认转发端口只允许本地程序访问,使用-g参数才可以接受远程主机连接.这个参数和-L一起使用时才起作用,和-R一起使用时无用.典型的,假设A电脑在家,B电脑在办公室,O电脑为有公网IP(116.117.118.119)的中转站,现在想从A电脑远程连接到B电脑,需要做的工作为:  </p>
-<ul>
-<li>1.在B电脑上建立远程转发到O.假设O电脑使用端口11111  </li>
-<li>2.在O电脑上建立本地转发,使用-g参数,假设将22222端口转发到11111  </li>
-<li>3.在A电脑上执行”ssh -p 22222 username@116.117.118.119”,即可以连接到B电脑  </li>
-</ul>
+<h3 id="3-g-远程连接支持"><a href="#3-g-远程连接支持" class="headerlink" title="3. -g 远程连接支持"></a>3. -g 远程连接支持</h3><p>本地端口转发时,默认转发端口只允许本地程序访问,使用-g参数才可以接受远程主机连接.这个参数和-L一起使用时才起作用,和-R一起使用时无用.  </p>
 <h2 id="2-更多的配置"><a href="#2-更多的配置" class="headerlink" title="2. 更多的配置"></a>2. 更多的配置</h2><p>由于路由器的限制,长期不活动的连接有可能会被断开,为了防止这种事情发生,可以增加心跳配置.具体为:<br>修改~/.ssh/config文件,增加如下内容:<br>Host *<br>ServerAliveInterval 30  </p>
 <p>#如果依然有问题,增加如下内容再重试:<br>TCPKeepAlive yes  </p>
 <h2 id="3-更多的工具"><a href="#3-更多的工具" class="headerlink" title="3. 更多的工具"></a>3. 更多的工具</h2><h3 id="1-plink"><a href="#1-plink" class="headerlink" title="1.plink"></a>1.<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" target="_blank" rel="external">plink</a></h3><p>windows下的SSH客户端命令行工具  </p>
-<h3 id="2-JSch"><a href="#2-JSch" class="headerlink" title="2.JSch"></a>2.<a href="http://www.jcraft.com/jsch/" target="_blank" rel="external">JSch</a></h3><p>Java实现的SSH客户端,如果开发中需要用到,可以直接引用,这里有一些<a href="http://www.jcraft.com/jsch/examples/" target="_blank" rel="external">例子</a></p>
+<h3 id="2-JSch"><a href="#2-JSch" class="headerlink" title="2.JSch"></a>2.<a href="http://www.jcraft.com/jsch/" target="_blank" rel="external">JSch</a></h3><p>Java实现的SSH客户端,如果开发中需要用到,可以直接引用,这里有一些<a href="http://www.jcraft.com/jsch/examples/" target="_blank" rel="external">例子</a>  </p>
+<h3 id="3-autossh"><a href="#3-autossh" class="headerlink" title="3.autossh"></a>3.<a href="http://www.harding.motd.ca/autossh/" target="_blank" rel="external">autossh</a></h3><p>SSH自动重连的辅助工具,非常有用  </p>
+<h3 id="4-putty"><a href="#4-putty" class="headerlink" title="4.putty"></a>4.<a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html" target="_blank" rel="external">putty</a></h3><p>windows下的SSH客户端工具,我们下面会介绍一下它的用法 </p>
+<h3 id="5-winscp"><a href="#5-winscp" class="headerlink" title="5.winscp"></a>5.<a href="https://winscp.net/download/winscp577setup.exe" target="_blank" rel="external">winscp</a></h3><p>windows下使用,和linux系统交互的文件传输工具,基于scp.如果你不想用samba或者不想部署ftp服务,又想安全传输文件的话,这个是首选  </p>
+<h2 id="4-更多的实例"><a href="#4-更多的实例" class="headerlink" title="4. 更多的实例"></a>4. 更多的实例</h2><h3 id="1-远程SSH"><a href="#1-远程SSH" class="headerlink" title="1. 远程SSH"></a>1. 远程SSH</h3><h4 id="1-背景"><a href="#1-背景" class="headerlink" title="1. 背景"></a>1. 背景</h4><ul>
+<li>1.家庭电脑A,windows系统  </li>
+<li>2.拥有公网IP的电脑O,IP:114.115.116.117,用户名:username  </li>
+<li>3.工作电脑B,linux系统,无公网IP<br>想要做到的是:在A上SSH到B  <h4 id="2-步骤"><a href="#2-步骤" class="headerlink" title="2. 步骤"></a>2. 步骤</h4></li>
+<li>1.在B上建立远程转发,执行:ssh -fNR 2222:localhost:22 username@114.115.116.117  </li>
+<li>2.在O上建立本地转发,执行:ssh -fN -g -L 2223:localhost:2222 username@localhost  </li>
+<li>3.在A上使用putty,设置IP为114.115.116.117,端口为2223,建立连接,即可登录到B<br>其中第1步中,如果连接不稳定,可以修改~/.ssh/config文件,增加心跳.若还是不稳定,可以安装antossh,执行:autossh -M 20000 -fNR 2222:localhost:22 username@114.115.116.117  <h3 id="2-远程桌面"><a href="#2-远程桌面" class="headerlink" title="2. 远程桌面"></a>2. 远程桌面</h3><h4 id="1-背景-1"><a href="#1-背景-1" class="headerlink" title="1. 背景"></a>1. 背景</h4></li>
+<li>1.家庭电脑A,windows系统</li>
+<li>2.拥有公网IP的电脑O,IP:114.115.116.117,用户名:username</li>
+<li>3.工作电脑B,windows系统,无公网IP<br>想要做到的是:在A上使用windows的远程桌面连接到B<h4 id="2-步骤-1"><a href="#2-步骤-1" class="headerlink" title="2. 步骤"></a>2. 步骤</h4></li>
+<li>1.在B上使用putty建立远程转发,配置如图:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/ssh1.png" alt="putty建立远程桌面"></li>
+<li>2.在O上建立本地转发,执行:ssh -fN -g -L 3391:localhost:3390 username@localhost</li>
+<li>3.在A上使用远程桌面,连接到114.115.116.117:3391,即可登录到B,如图:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/ssh2.png" alt="putty建立远程桌面"><br>其中第1步中,如果连接不稳定,可以安装Cygwin,在Cygwin下安装autossh,然后执行autossh -M 20000 -fNR 3390:localhost:3389 username@114.115.116.117  <h3 id="3-本地调试"><a href="#3-本地调试" class="headerlink" title="3. 本地调试"></a>3. 本地调试</h3><h4 id="1-背景-2"><a href="#1-背景-2" class="headerlink" title="1. 背景"></a>1. 背景</h4></li>
+<li>1.同事电脑A,windows系统</li>
+<li>2.拥有公网IP的电脑O,IP:114.115.116.117,用户名:username</li>
+<li>3.家庭电脑B,windows系统,无公网IP<br>现在你在自己的电脑B上开启了一个服务,端口为80,需要调试你的程序,前端同事在自己的电脑上A上需要连接到你的服务<h4 id="2-步骤-2"><a href="#2-步骤-2" class="headerlink" title="2. 步骤"></a>2. 步骤</h4></li>
+<li>1.在B上使用putty建立远程转发,配置如图:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/ssh3.png" alt="putty远程调试"></li>
+<li>2.在O上建立本地转发,执行:ssh -fN -g -L 8080:localhost:8079 username@localhost</li>
+<li>3.在A上连接114.115.116.117:8080,即可登录到你的服务</li>
+</ul>
 	  
 
 	  <div>
