@@ -1,0 +1,167 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Jedis使用中的几个概念 | 梦里不知身是客</title>
+  <meta name="author" content="晓渡">
+  
+  <meta name="description" content="转载请注明出处  
+作者:晓渡文章地址:https://greatestrabit.github.io/2016/04/17/firstjedis/  
+这两天随便玩了一下Jedis,初步了解了一下其中的几个概念,记录一下.
+1.数据组织方式1.数据库Redis中默认设置了16个数据库,编号为0~1">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="Jedis使用中的几个概念"/>
+  <meta property="og:site_name" content="梦里不知身是客"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="梦里不知身是客" type="application/atom+xml">
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">梦里不知身是客</a><span class="split"></span><span class="title">Jedis使用中的几个概念</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2016-04-17</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  <div class="col-xs-12 col-sm-3 col-md-3 toc"> 
+	<!-- toc -->
+<script type="text/javascript">
+		jQuery(document).ready(function() {
+ 		   generateWikiTOC('.note', '.toc',  2 , 2 );
+		});
+</script>
+  </div><!-- col-md-3 -->
+  
+  
+
+  
+  <div class="col-xs-12 col-sm-9 col-md-9 note">
+	
+
+	  <!-- content -->
+	  <p>转载请注明出处  </p>
+<p>作者:<a href="https://greatestrabit.github.io/2016/03/01/me/" target="_blank" rel="external">晓渡</a><br>文章地址:<a href="https://greatestrabit.github.io/2016/04/17/firstjedis/" target="_blank" rel="external">https://greatestrabit.github.io/2016/04/17/firstjedis/</a>  </p>
+<p>这两天随便玩了一下Jedis,初步了解了一下其中的几个概念,记录一下.</p>
+<h2 id="1-数据组织方式"><a href="#1-数据组织方式" class="headerlink" title="1.数据组织方式"></a>1.数据组织方式</h2><h3 id="1-数据库"><a href="#1-数据库" class="headerlink" title="1.数据库"></a>1.数据库</h3><p>Redis中默认设置了16个数据库,编号为0~15,可以通过修改配置文件来修改数据库个数.可以使用select(databaseNo)方法来选择使用的数据库.</p>
+<h3 id="2-文件夹"><a href="#2-文件夹" class="headerlink" title="2.文件夹"></a>2.文件夹</h3><p>Redis的Key中使用冒号作为分隔符,在<a href="http://redisdesktop.com/" target="_blank" rel="external">RedisDesktopManager</a>中查看可以看到分级的文件夹.需要注意的是,这种方式只有在客户端中查看才能看到分级效果,实际的Key并没有变化.</p>
+<h3 id="3-HSET"><a href="#3-HSET" class="headerlink" title="3.HSET"></a>3.HSET</h3><p>HSET的存储方式可以在一个Key中保存一组Key-Value.</p>
+<p>以上三种方式组合,可以将数据逐层分级,方便存储和查找.下面是一个例子:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">Jedis jedis = <span class="keyword">new</span> Jedis(<span class="string">"192.168.20.252"</span>);</span><br><span class="line">jedis.select(<span class="number">1</span>);</span><br><span class="line"></span><br><span class="line">jedis.hset(<span class="string">"movie:war:Fury"</span>, <span class="string">"score"</span>, <span class="string">"7.6"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:war:Fury"</span>, <span class="string">"website"</span>, <span class="string">"http://www.imdb.com/title/tt2713180"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:war:Fury"</span>, <span class="string">"Director"</span>, <span class="string">"David Ayer"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:war:Fury"</span>, <span class="string">"Writer"</span>, <span class="string">"David Ayer"</span>);</span><br><span class="line"></span><br><span class="line">jedis.hset(<span class="string">"movie:war:BlackHawkDown"</span>, <span class="string">"score"</span>, <span class="string">"7.7"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:war:BlackHawkDown"</span>, <span class="string">"website"</span>, <span class="string">"http://www.imdb.com/title/tt0265086"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:war:BlackHawkDown"</span>, <span class="string">"Director"</span>, <span class="string">"Ridley Scott"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:war:BlackHawkDown"</span>, <span class="string">"Writer"</span>, <span class="string">"Mark Bowden"</span>);</span><br><span class="line"></span><br><span class="line">jedis.hset(<span class="string">"movie:action:TheRundown"</span>, <span class="string">"score"</span>, <span class="string">"6.7"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:action:TheRundown"</span>, <span class="string">"website"</span>, <span class="string">"http://www.imdb.com/title/tt0327850"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:action:TheRundown"</span>, <span class="string">"Director"</span>, <span class="string">"Peter Berg"</span>);</span><br><span class="line">jedis.hset(<span class="string">"movie:action:TheRundown"</span>, <span class="string">"Writer"</span>, <span class="string">"R.J. Stewart"</span>);</span><br><span class="line"></span><br><span class="line">jedis.hset(<span class="string">"music:pop:FuckinPerfect"</span>, <span class="string">"length"</span>, <span class="string">"3:33"</span>);</span><br><span class="line">jedis.hset(<span class="string">"music:pop:FuckinPerfect"</span>, <span class="string">"size"</span>, <span class="string">"8.5M"</span>);</span><br></pre></td></tr></table></figure></p>
+<p>存储后的效果如下:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/redisdesktopmanager.jpg" alt="redis文件夹"></p>
+<h2 id="2-Jedis连接方式"><a href="#2-Jedis连接方式" class="headerlink" title="2.Jedis连接方式"></a>2.Jedis连接方式</h2><p>使用Jedis连接Redis服务器有三种方式:Jedis/JedisPool,ShardedJedis/ShardedJedisPool,JedisCluster,分别对应了服务器的不同部署方式.</p>
+<h3 id="1-使用Jedis-JedisPool连接"><a href="#1-使用Jedis-JedisPool连接" class="headerlink" title="1.使用Jedis/JedisPool连接"></a>1.使用Jedis/JedisPool连接</h3><p>这种方式针对单个Redis服务器建立连接,Jedis是单个连接,JedisPool即Jedis连接池,为了优化连接性能而生.</p>
+<h3 id="2-使用ShardedJedis-ShardedJedisPool连接"><a href="#2-使用ShardedJedis-ShardedJedisPool连接" class="headerlink" title="2.使用ShardedJedis/ShardedJedisPool连接"></a>2.使用ShardedJedis/ShardedJedisPool连接</h3><p>这种方式可以连接互不相通的一组Redis服务器.即Redis服务器因为数据量太大在数据上进行了水平拆分,但是服务器间并不通信,也没有副本备份.同样的道理,ShardedJedisPool是针对ShardedJedis单个连接所做的优化.</p>
+<h3 id="3-使用JedisCluster连接"><a href="#3-使用JedisCluster连接" class="headerlink" title="3.使用JedisCluster连接"></a>3.使用JedisCluster连接</h3><p>使用这种方式时,默认Redis已经进行了集群处理,JedisCluster即针对整个集群的连接.</p>
+<p>上述三种方式的对比如下:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/jedisconnection.png" alt="JedisConnection"></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+	
+		
+			
+			
+		
+	
+		
+			
+			
+			
+		
+	
+		
+	
+		
+			
+		
+	
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2016/04/12/antireplayattack/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2016 晓渡
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
