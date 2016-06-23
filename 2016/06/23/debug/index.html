@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用Eclipse进行测试环境的远程调试 | 梦里不知身是客</title>
+  <meta name="author" content="晓渡">
+  
+  <meta name="description" content="转载请注明出处  
+作者:晓渡文章地址:https://greatestrabit.github.io/2016/06/23/debug/  
+对于使用Eclipse进行日常编程工作的工程师来说,调试是每天都在进行的工作.针对一般意义上的调试过程,相信每一位工程师朋友都熟练掌握了.这里介绍几个调试中">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用Eclipse进行测试环境的远程调试"/>
+  <meta property="og:site_name" content="梦里不知身是客"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  
+    <link rel="alternative" href="/atom.xml" title="梦里不知身是客" type="application/atom+xml">
+  
+  
+    <link href="/favicon.ico" rel="icon">
+  
+  
+  <link rel="stylesheet" href="/css/bootstrap.min.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/font-awesome.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/highlight.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/google-fonts.css" media="screen" type="text/css">
+  <link rel="stylesheet" href="/css/responsive.css" media="screen" type="text/css">  
+  <link rel="stylesheet" href="/css/sidenav.css" media="screen" type="text/css">  
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+
+  <script src="/js/jquery-2.0.3.min.js"></script>
+
+  <!-- analytics -->
+  
+
+</head>
+
+<body id="body" data-spy="scroll" data-target=".toc">
+  <div class="container" id="container">
+	<div class="content">
+	  <div class="page-header">		
+  <h1><a class="brand" href="/">梦里不知身是客</a><span class="split"></span><span class="title">使用Eclipse进行测试环境的远程调试</span><span class="date" id="title-date"><i class="fa fa-clock-o"></i> 2016-06-23</span></h1>
+</div>		
+
+<div class="row page">
+  <!-- cols -->	
+  
+  <div class="col-xs-12 col-sm-3 col-md-3 toc"> 
+	<!-- toc -->
+<script type="text/javascript">
+		jQuery(document).ready(function() {
+ 		   generateWikiTOC('.note', '.toc',  2 , 2 );
+		});
+</script>
+  </div><!-- col-md-3 -->
+  
+  
+
+  
+  <div class="col-xs-12 col-sm-9 col-md-9 note">
+	
+
+	  <!-- content -->
+	  <p>转载请注明出处  </p>
+<p>作者:<a href="https://greatestrabit.github.io/2016/03/01/me/" target="_blank" rel="external">晓渡</a><br>文章地址:<a href="https://greatestrabit.github.io/2016/06/23/debug/" target="_blank" rel="external">https://greatestrabit.github.io/2016/06/23/debug/</a>  </p>
+<p>对于使用Eclipse进行日常编程工作的工程师来说,调试是每天都在进行的工作.针对一般意义上的调试过程,相信每一位工程师朋友都熟练掌握了.这里介绍几个调试中比较实用的高级功能.</p>
+<h2 id="远程调试"><a href="#远程调试" class="headerlink" title="远程调试"></a>远程调试</h2><p>由于部署环境的差异性,相信很多朋友都碰到过开发环境正常测试过的功能在测试环境甚至生产环境下出现bug的情况.一般情况下,生产环境可以采取的手段比较单一,即通过日志的方式获取运行中的环境上下文,分析日志文件并尝试重现bug.这会带来的问题还是不少的.首先,日志的分析是一项比较耗时的工作;其次,现有的日志记录不一定能反映出问题,你可能需要多次重复这个过程(分析日志-&gt;猜测问题-&gt;加日志-&gt;部署-&gt;获取日志)来慢慢逼近问题.倘若是测试环境,我们还多了一项可供选择的手段,即远程调试:将程序在测试环境中以debug模式启动,在本机使用Eclipse在工程中设置断点进行调试.</p>
+<h3 id="1-将测试环境中的程序以debug模式启动"><a href="#1-将测试环境中的程序以debug模式启动" class="headerlink" title="1.将测试环境中的程序以debug模式启动"></a>1.将测试环境中的程序以debug模式启动</h3><p>倘若是独立JavaSE程序,只需要在启动时增加几个参数即可.<br>java -Xdebug -Xrunjdwp:transport=dt_socket,server=y,address=11111,suspend=y -jar calc.jar<br>若正常启动,你将看到以下画面:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/remote%20debug%20server.png" alt="remote debug server"></p>
+<h3 id="2-使用Eclipse进行远程调试"><a href="#2-使用Eclipse进行远程调试" class="headerlink" title="2.使用Eclipse进行远程调试"></a>2.使用Eclipse进行远程调试</h3><p>在Eclipse中的对应工程中配置调试属性,如下:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/remote%20debug%20client.jpg" alt="remote debug client"></p>
+<h3 id="3-开始远程调试"><a href="#3-开始远程调试" class="headerlink" title="3.开始远程调试"></a>3.开始远程调试</h3><p>点击上一步中图中的Debug按钮开始调试.<br>一切正常的话,你就可以像调试本地程序一样开始调试测试环境上的程序了.</p>
+<h3 id="4-需要注意的问题"><a href="#4-需要注意的问题" class="headerlink" title="4.需要注意的问题"></a>4.需要注意的问题</h3><ol>
+<li>如果程序需要接收来自控制台的输入,应该在测试环境中的控制台中输入.</li>
+<li>需要注意测试环境的代码和开发环境中不一致的情况.如果Eclipse中设置的断点的行数刚好对应测试环境程序中的空行,将无法跳入断点,看上去就像调试并没有成功一样.这种情况并不会发生在本地调试中,因为本地调试无法在空行上设置断点.下面是一个代码不一致的例子.<br>实际代码对比:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/debugcode.jpg" alt="debugcode"><br>运行后的效果如下:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/remote%20debugging.png" alt="remote debugging"><br>注意对比2处和3处,在3处本应该有的变量index在2处并没有出现.  <h3 id="5-tomcat远程调试"><a href="#5-tomcat远程调试" class="headerlink" title="5.tomcat远程调试"></a>5.tomcat远程调试</h3>对tomcat进行远程调试是需要将tomcat以debug模式启动,启动命令为(假定用户已经在tomcat/bin目录下):<br>./catalina.sh jpda start<br>需要注意的是,最新版本的tomcat对调试的监听地址进行了限制,只允许127.0.0.1访问,所以如果在非本地机器上调试的话,需要修改设置:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/remote%20debug%20tomcat.png" alt="remote debug tomcat"><br>将图中的JPDA_ADDRESS变量由原来的127.0.0.1:8000修改为8000.<br>Eclipse端的设置和第2步中的设置没有区别.<h2 id="条件断点"><a href="#条件断点" class="headerlink" title="条件断点"></a>条件断点</h2>如果需要对循环中的数据进行调试,使用条件断点是个不错的选择.将断点设置在指定的位置上,右键进一步设置断点属性,如下:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/condition%20debug.jpg" alt="condition debug"><br>调试时,程序会中断在符合条件处.<h2 id="异常断点"><a href="#异常断点" class="headerlink" title="异常断点"></a>异常断点</h2>断点不仅可以设置在某一行,也可以针对整个工程进行设置.典型的,假设你知道程序会在某个地方抛出NullPointerException,可是并不是每一次运行都会出现,就可以为工程设置异常断点,如下:<br><img src="https://raw.githubusercontent.com/greatestrabit/greatestrabit.github.io/master/img/project%20breakpoint.jpg" alt="project breakpoint"><br>程序会中断在出现抛出NullPointerException的地方.  </li>
+</ol>
+<p>本文中用到的代码见: <a href="https://github.com/greatestrabit/AdvancedJava/tree/master/Calc" target="_blank" rel="external">github</a></p>
+	  
+
+	  <div>
+  		<center>
+		  <div class="pagination">
+<ul class="pagination">
+	
+	
+	
+	
+	
+	
+		
+			
+			
+		
+	
+		
+	
+		
+	
+		
+	
+		
+			
+			
+			
+		
+	
+	
+	
+		<li class="prev disabled"><a><i class="fa fa-arrow-circle-o-left"></i>prev</a></li>
+	
+	<li><a href="/"><i class="fa fa-archive"></i>Home</a></li>
+	
+		<li class="next"><a href="/2016/03/29/callback/" class="alignright next">next<i class="fa fa-arrow-circle-o-right"></i></a></li>
+	
+</ul>
+</div>
+
+		</center>
+	  </div>
+	  
+	</div> <!-- col-md-9/col-md-12 -->
+	
+  </div><!-- row -->
+
+	</div>
+  </div>
+  <div class="container-narrow">
+	<footer> <p>
+  &copy; 2016 晓渡
+  
+      with help from <a href="http://zespia.tw/hexo/" target="_blank">Hexo</a> and <a href="http://getbootstrap.com/" target="_blank">Twitter Bootstrap</a>. Theme by <a href="http://github.com/wzpan/hexo-theme-wixo/">Wixo</a>.    
+</p> </footer>
+  </div> <!-- container-narrow -->
+  
+<a id="gotop" href="#">   
+  <span>▲</span> 
+</a>
+
+<script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+<script src="/js/bootstrap.min.js"></script>
+<script src="/js/jquery.tableofcontents.min.js"></script>
+<script src="/js/tocgenerator.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
